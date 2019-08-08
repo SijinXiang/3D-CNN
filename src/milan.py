@@ -18,7 +18,7 @@ class InputHandle(object):
 		self.minibatch_size = input_param['minibatch_size']
 		self.input_seq_length = input_param['input_seq_length']
 		self.output_seq_length = input_param['output_seq_length']
-        
+
 		self.data = {'input_raw_data': [],
 					'output_raw_data': []}
 		self.indices = []
@@ -39,10 +39,8 @@ class InputHandle(object):
 		self.mean = np.mean(snapshots, axis=0)
 		self.std = np.std(snapshots, axis=0)
 		norm = snapshots - self.mean
-		snapshots = np.nan_to_num(np.divide(norm, self.std)
-
-		if not self.is_tra_set:
-
+		snapshots = np.nan_to_num(np.divide(norm, self.std))
+		if self.is_tra_set == False:
 			for i in range(total_shots // (self.input_seq_length+self.output_seq_length)):
 				start = int(i * (self.input_seq_length + self.output_seq_length))
 				end = int((i+1) * (self.input_seq_length + self.output_seq_length))

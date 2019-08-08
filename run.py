@@ -98,6 +98,8 @@ def train_wrapper(model):
 	batch_id = 0
 	stopping = [10000000000000000]
 	for itr in range(1, FLAGS.max_iterations + 1):
+		if itr == 2:
+			print('training process started...')
 		if train_input_handle.no_batch_left():
 			model.save(itr)
 			print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),'itr: ' + str(itr))

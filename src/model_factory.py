@@ -26,7 +26,7 @@ class Model(object):
 		for i in range(self.configs.n_gpu):
 			with tf.device('/gpu:%d' % i):
 				with tf.variable_scope(tf.get_variable_scope(), reuse=True if i > 0 else None):
-					output_list = cnn3d_net.cnn_net(self.x[i], num_layers, num_hidden)
+					output_list = cnn3d_net.cnn_net(self.x[i], num_layers, num_hidden, configs)
 					gen_ims = output_list[0]
 					loss = output_list[1]
 					loss_train.append(loss / self.configs.batch_size)
@@ -40,7 +40,7 @@ class Model(object):
 				for j in range(len(grads[0])):
 					grads[0][j] += grads[i][j]
 
-		train_step = tf.train.AdamOptimizer(self.configs.lr)
+		self.train_step = tf.train.AdamOptimizer(self.configs.lr)
 		self.loss_train = loss_train[0] / self.configs.n_gpu
         
 		variables = tf.global_variables()
@@ -54,24 +54,24 @@ class Model(object):
 		if self.configs.pretrained_model:
 			self.saver.restore(self.sess, self.configs.pretrained_model)
 
-		def train(self, inputs, lr, itr):
-			feed_dict = {self.x[i]: inputs[i] for i in range(self.configs.n_gpu)}
-			feed_dict.update({self.tf_lr: lr})
-			feed_dict.update({self.itr: float(itr)})
-			loss, _ = self.sess.run((self.loss_train, self.train_step), feed_dict)
-			return loss
+	def train(self, inputs, lr, itr):
+		feed_dict = {self.x[i]: inputs[i] for i in range(self.configs.n_gpu)}
+		feed_dict.update({self.tf_lr: lr})
+		feed_dict.update({self.itr: float(itr)})
+		loss, _ = self.sess.run((self.loss_train, self.train_step), feed_dict)
+		return loss
         
-		def test(self, inputs):
-			feed_dict = {self.x[i]: inputs[i] for i in range(self.configs.n_gpu)}
-			gen_ims = self.sess.run(self.pred_seq, feed_dict)
-			return gen_ims
+	def test(self, inputs):
+		feed_dict = {self.x[i]: inputs[i] for i in range(self.configs.n_gpu)}
+		gen_ims = self.sess.run(self.pred_seq, feed_dict)
+		return gen_ims
         
-		def save(self, itr):
-			checkpoint_path = os.path.join(self.configs.save_dir, 'model.ckpt')
-			self.saver.save(self.sess, checkpoint_path, global_step=itr)
-			print('saved to ' + self.configs.save_dir)
+	def save(self, itr):
+		checkpoint_path = os.path.join(self.configs.save_dir, 'model.ckpt')
+		self.saver.save(self.sess, checkpoint_path, global_step=itr)
+		print('saved to ' + self.configs.save_dir)
 
-		def load(self, checkpoint_path):
-			print('load model:', checkpoint_path)
-			self.saver.restore(self.sess, checkpoint_path)
+	def load(self, checkpoint_path):
+		print('load model:', checkpoint_path)
+		self.saver.restore(self.sess, checkpoint_path)
 

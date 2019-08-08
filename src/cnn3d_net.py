@@ -11,8 +11,8 @@ def cnn_net(images, num_layers, num_hidden, configs):
 	ims_width = shape[3]
 	output_channels = shape[-1]
 	input_length = configs.input_seq_length
-	kernel_shape = configs.kernel_shape
-	pool_size = [int(x) for x in self.configs.pool_size.split(',')]
+	kernel_size = configs.kernel_size
+	pool_size = [int(x) for x in configs.pool_size.split(',')]
 	strides = configs.strides
 
 	for i in range(num_layers):
@@ -24,9 +24,9 @@ def cnn_net(images, num_layers, num_hidden, configs):
 		hidden_out = num_hidden[i]
 		new_cnn = conv3d(
                 name = 'cnn3d'+str(i),
-                input_shape = [input_length, window_length, ims_height, num_hidden_in],
+                input_shape = [input_length, ims_height, ims_width, num_hidden_in],
                 output_channels = hidden_out,
-                kernel_shape = kernel_shape)
+                kernel_size = kernel_size)
 		cnn3d_layer.append(new_cnn)
 		new_pooling = avgpool3d(
                     name = 'avgpooling'+str(i),
@@ -39,9 +39,9 @@ def cnn_net(images, num_layers, num_hidden, configs):
 	num_hidden_in = num_hidden[-1]
 	new_cnn = conv3d(
                 name = 'cnn3d'+str(num_layers),
-                input_shape = [input_length, window_length, ims_height, num_hidden_in],
+                input_shape = [input_length, ims_height, ims_width, num_hidden_in],
                 output_channels = output_channels,
-                kernel_shape = kernel_shape)
+                kernel_size = kernel_size)
 	cnn3d_layer.append(new_cnn)  
 	new_pooling = avgpool3d(
                     name = 'avgpooling'+str(num_layers),

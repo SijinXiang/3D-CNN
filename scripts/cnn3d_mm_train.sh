@@ -1,15 +1,15 @@
+#    --pretrained_model pretrain/model.ckpt-603 \
 cd ..
 python run.py \
-    --pretrained_model pretrain/model.ckpt-603 \
     --input_seq_length 6 \
     --output_seq_length 6 \
-    --num_hidden 10,10,10,5 \
+    --num_hidden 10,10 \
     --kernel_size 20 \
     --pool_size 1,5,5 \
     --strides 1 \
-    --lr 0.0001 \
+    --lr 0.001 \
     --batch_size 12 \
-    --max_iterations 5000 \
+    --max_iterations 10000 \
     --is_training True \
     --save_dir checkpoints \
     --gen_frm_dir results \
