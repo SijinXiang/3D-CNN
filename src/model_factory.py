@@ -2,6 +2,32 @@ import os
 from src import cnn3d_net
 import tensorflow as tf
 
+def adam_updates(params, cost_or_grads, lr=0.001, mom1=0.9, mom2=0.999):
+	"""Builds an adam optimizer."""
+	updates = []
+	if not isinstance(cost_or_grads, list):
+		grads = tf.gradients(cost_or_grads, params)
+	else:
+		grads = cost_or_grads
+	t = tf.Variable(1., 'adam_t')
+	for p, g in zip(params, grads):
+		mg = tf.Variable(tf.zeros(p.get_shape()), p.name + '_adam_mg')
+		if mom1 > 0:
+			v = tf.Variable(tf.zeros(p.get_shape()), p.name + '_adam_v')
+			v_t = mom1 * v + (1. - mom1) * g
+			v_hat = v_t / (1. - tf.pow(mom1, t))
+			updates.append(v.assign(v_t))
+		else:
+			v_hat = g
+		mg_t = mom2 * mg + (1. - mom2) * tf.square(g)
+		mg_hat = mg_t / (1. - tf.pow(mom2, t))
+		g_t = v_hat / tf.sqrt(mg_hat + 1e-8)
+		p_t = p - lr * g_t
+		updates.append(mg.assign(mg_t))
+		updates.append(p.assign(p_t))  # TODO(yunbo): check if this line is correct
+	updates.append(t.assign_add(1))
+	return tf.group(*updates)
+
 class Model(object):
     
 	def __init__(self, configs):
@@ -40,7 +66,7 @@ class Model(object):
 				for j in range(len(grads[0])):
 					grads[0][j] += grads[i][j]
 
-		self.train_step = tf.train.AdamOptimizer(self.configs.lr)
+		self.train_op = adam_updates(all_params, grads[0],lr=self.tf_lr,mom1=0.95, mom2=0.9995)
 		self.loss_train = loss_train[0] / self.configs.n_gpu
         
 		variables = tf.global_variables()
@@ -58,7 +84,7 @@ class Model(object):
 		feed_dict = {self.x[i]: inputs[i] for i in range(self.configs.n_gpu)}
 		feed_dict.update({self.tf_lr: lr})
 		feed_dict.update({self.itr: float(itr)})
-		loss, _ = self.sess.run((self.loss_train, self.train_step), feed_dict)
+		loss, _ = self.sess.run((self.loss_train, self.train_op), feed_dict)
 		return loss
         
 	def test(self, inputs):
