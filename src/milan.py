@@ -36,8 +36,8 @@ class InputHandle(object):
 		snapshots = np.load(self.paths)
 		total_shots = snapshots.shape[0]
 
-		self.mean = np.mean(snapshots, axis=0)
-		self.std = np.std(snapshots, axis=0)
+		self.mean = np.mean(snapshots)
+		self.std = np.std(snapshots)
 		norm = snapshots - self.mean
 		snapshots = np.nan_to_num(np.divide(norm, self.std))
 		if self.is_tra_set == False:
