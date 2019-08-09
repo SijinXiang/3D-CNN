@@ -1,6 +1,11 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import os
 from src import cnn3d_net
 import tensorflow as tf
+import numpy as np
 
 def adam_updates(params, cost_or_grads, lr=0.001, mom1=0.9, mom2=0.999):
 	"""Builds an adam optimizer."""
@@ -90,7 +95,10 @@ class Model(object):
 	def test(self, inputs):
 		feed_dict = {self.x[i]: inputs[i] for i in range(self.configs.n_gpu)}
 		gen_ims = self.sess.run(self.pred_seq, feed_dict)
-		return gen_ims
+		#print('shape before squzzes: ', np.shape(gen_ims))
+		#gen_ims = np.squeeze(gen_ims, axis=0)
+		#print('shape after squzzes: ', np.shape(gen_ims[0]))
+		return gen_ims[0]
         
 	def save(self, itr):
 		checkpoint_path = os.path.join(self.configs.save_dir, 'model.ckpt')

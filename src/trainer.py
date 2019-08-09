@@ -39,17 +39,19 @@ def test(model, test_input_handle, configs, save_name):
 		test_dat = np.split(test_ims, configs.n_gpu)
 		img_out = model.test(test_dat)
 		target_out = test_ims[:, -output_length:]
+		#print('test_ims: ',np.shape(test_ims))
+		#print('img_out: ',np.shape(img_out))
         
 		for i in range(output_length):
 			x = target_out[:, i]
-			gx = img_out[:, i]
+			gx = img_out[:, int(i)]
 			mse = np.square(x - gx).sum()
 			img_mse[i] += mse
 			avg_mse += mse
         
 		if not configs.is_training:
 			test_ims = test_ims * test_input_handle.std + test_input_handle.mean
-			img_out = img_gen * test_input_handle.std + test_input_handle.mean
+			img_out = img_out * test_input_handle.std + test_input_handle.mean
 			target_out = test_ims[:, -output_length:]
 
 			path = os.path.join(res_path, str(batch_id))
@@ -68,7 +70,7 @@ def test(model, test_input_handle, configs, save_name):
 
 	avg_mse = avg_mse / test_input_handle.total()
 	avg_mse_snapshot = avg_mse / (configs.output_seq_length)
-	img_mse = img_mse / test_input_handle.total()
+	img_mse = np.asarray(img_mse) / test_input_handle.total()
 
 	if configs.is_training:
 		print('validation loss:\n' + 'mse per seq: ' + str(avg_mse) + '\tmse per snapshot: ' + str(avg_mse_snapshot))
