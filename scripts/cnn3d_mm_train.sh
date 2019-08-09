@@ -1,6 +1,6 @@
+#    --pretrained_model checkpoints/model.ckpt-2 \
 cd ..
 python run.py \
-    --pretrained_model checkpoints/model.ckpt-3893 \
     --input_seq_length 6 \
     --output_seq_length 6 \
     --num_hidden 10,10 \
@@ -10,7 +10,7 @@ python run.py \
     --lr 0.001 \
     --batch_size 40 \
     --max_iterations 10000 \
-    --is_training False \
+    --is_training True \
     --save_dir checkpoints/6-6/10-10 \
     --gen_frm_dir results/6-6/10-10 \
     --train_data_paths data/milan_tra.npy \

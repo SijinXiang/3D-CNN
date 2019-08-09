@@ -50,10 +50,12 @@ def test(model, test_input_handle, configs, save_name):
 			avg_mse += mse
         
 		if not configs.is_training:
+			#print('std and mean shape: ',np.shape(test_input_handle.std), np.shape(test_input_handle.mean))
 			test_ims = test_ims * test_input_handle.std + test_input_handle.mean
 			img_out = img_out * test_input_handle.std + test_input_handle.mean
 			target_out = test_ims[:, -output_length:]
-
+			#print('while denormalize: ',np.shape(test_ims))
+			#print('while saving:')
 			path = os.path.join(res_path, str(batch_id))
 			os.mkdir(path)
 			name = 'input.npy'

@@ -97,7 +97,7 @@ def train_wrapper(model):
 	tra_cost = 0.0
 	batch_id = 0
 	stopping = [10000000000000000]
-	for itr in range(1170, FLAGS.max_iterations + 1):
+	for itr in range(1, FLAGS.max_iterations + 1):
 		if itr == 2:
 			print('training process started...')
 			#model.save(itr)
@@ -111,9 +111,9 @@ def train_wrapper(model):
 			val_cost = trainer.test(model, test_input_handle,FLAGS, itr)
 			if val_cost < min(stopping):
 				stopping = [val_cost]
-			elif len(stopping) < 5:
+			elif len(stopping) < 3:
 				stopping.append(val_cost)
-			if len(stopping) == 5:
+			if len(stopping) == 3:
 				break
 			train_input_handle.begin(do_shuffle=True)
 			tra_cost = 0

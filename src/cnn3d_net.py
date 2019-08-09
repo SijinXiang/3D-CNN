@@ -13,7 +13,7 @@ def cnn_net(images, num_layers, num_hidden, configs):
 	ims_depth = shape[1]
 	ims_height = shape[2]
 	ims_width = shape[3]
-	output_channels = shape[-1]
+	output_channels = 1
 	input_length = configs.input_seq_length
 	kernel_size = configs.kernel_size
 	pool_size = [int(x) for x in configs.pool_size.split(',')]
@@ -21,7 +21,7 @@ def cnn_net(images, num_layers, num_hidden, configs):
 
 	for i in range(num_layers):
 		if i == 0:
-			num_hidden_in = output_channels
+			num_hidden_in = 1
 		else:
 			num_hidden_in = num_hidden[i - 1]
 
