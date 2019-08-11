@@ -97,9 +97,9 @@ def train_wrapper(model):
 	tra_cost = 0.0
 	batch_id = 0
 	stopping = [10000000000000000]
-	for itr in range(1, FLAGS.max_iterations + 1):
-		if itr == 2:
-			print('training process started...')
+	for itr in range(4502, FLAGS.max_iterations + 1):
+		if itr == 2 or itr % 10 == 0:
+			print('training...')
 			#model.save(itr)
 			#print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),'itr: ' + str(itr))
 			#print('training loss: ' + str(tra_cost / batch_id))
@@ -119,6 +119,7 @@ def train_wrapper(model):
 			tra_cost = 0
 			batch_id = 0
 		if itr % 50 == 0:
+			model.save(itr)
 			print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),'itr: ' + str(itr))
 			print('training loss: ' + str(tra_cost / batch_id))
 

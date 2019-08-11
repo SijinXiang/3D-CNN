@@ -1,15 +1,15 @@
-#    --pretrained_model checkpoints/model.ckpt-2 \
 cd ..
 python run.py \
+    --pretrained_model pretrain/model.ckpt-4501 \
     --input_seq_length 6 \
     --output_seq_length 6 \
-    --num_hidden 10,10 \
+    --num_hidden 5,15 \
     --kernel_size 20 \
     --pool_size 1,5,5 \
     --strides 1 \
     --lr 0.001 \
     --batch_size 40 \
-    --max_iterations 10000 \
+    --max_iterations 20000 \
     --is_training True \
     --save_dir checkpoints/6-6/10-10 \
     --gen_frm_dir results/6-6/10-10 \
